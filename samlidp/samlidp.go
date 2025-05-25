@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 
@@ -126,4 +127,16 @@ func (s *Server) InitializeHTTP() {
 	mux.HandleFunc("GET /shortcuts/{id}", s.HandleGetShortcut)
 	mux.HandleFunc("PUT /shortcuts/{id}", s.HandlePutShortcut)
 	mux.HandleFunc("DELETE /shortcuts/{id}", s.HandleDeleteShortcut)
+}
+
+func (s *Server) AddServiceProvider(sp *saml.EntityDescriptor) error {
+	s.idpConfigMu.Lock()
+	defer s.idpConfigMu.Unlock()
+
+	if _, ok := s.serviceProviders[sp.EntityID]; ok {
+		return os.ErrExist
+	}
+
+	s.serviceProviders[sp.EntityID] = sp
+	return nil
 }

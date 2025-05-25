@@ -5,12 +5,14 @@ import (
 	"crypto"
 	"crypto/x509"
 	"encoding/pem"
+	"encoding/xml"
 	"flag"
 	"net/http"
 	"net/url"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/logger"
 	"github.com/crewjam/saml/samlidp"
 )
@@ -71,6 +73,8 @@ UzreO96WzlBBMtY=
 	return c
 }()
 
+var spMetadataXML = ``
+
 func main() {
 	logr := logger.DefaultLogger
 	baseURLstr := flag.String("idp", "", "The URL to the IDP")
@@ -96,7 +100,7 @@ func main() {
 	err = idpServer.Store.Put("/users/alice", samlidp.User{Name: "alice",
 		HashedPassword: hashedPassword,
 		Groups:         []string{"Administrators", "Users"},
-		Email:          "alice@example.com",
+		Email:          "testsso", // Name ID of the user
 		CommonName:     "Alice Smith",
 		Surname:        "Smith",
 		GivenName:      "Alice",
@@ -114,8 +118,23 @@ func main() {
 		Surname:        "Smith",
 		GivenName:      "Bob",
 	})
+
+	modelVerse := "https://console.ucloud.cn/modelverse/model-center" // Example RelayState for UCloud ModelVerse
+	err = idpServer.Store.Put("/shortcuts/ucloud", samlidp.Shortcut{
+		Name:              "ucloud",
+		ServiceProviderID: "https://signin.ucloud.cn/xxx/saml/SSO", // Example Service Provider ID
+		RelayState:        &modelVerse,
+	})
 	if err != nil {
 		logr.Fatalf("%s", err)
+	}
+
+	var spMetadata saml.EntityDescriptor
+	if err := xml.Unmarshal([]byte(spMetadataXML), &spMetadata); err != nil {
+		logr.Fatalf("cannot unmarshal SP metadata: %v", err)
+	}
+	if err := idpServer.AddServiceProvider(&spMetadata); err != nil {
+		logr.Fatalf("cannot add service provider: %v", err)
 	}
 
 	http.ListenAndServe(":8080", idpServer)
