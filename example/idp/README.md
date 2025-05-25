@@ -172,3 +172,4 @@ PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWxwPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6cHJv
 - 变量`relayState`是登录之后重定向的地址。
 - 变量`serviceProviderID`是 SP 端的 ID，可以从 SP 端的元数据的`entityID`中获取
 - 变量`nameID`是用户的 ID，为子用户的用户名。在控制台上创建子用户时确定。
+- 可以先通过`http://127.0.0.1:8080/login` 使用用户名 alice 和密码 hunter2 登录，然后通过`http://127.0.0.1:8080/login/ucloud` 就可以跳转到 UCloud 的控制台。
