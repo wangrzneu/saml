@@ -76,6 +76,15 @@ UzreO96WzlBBMtY=
 // spMetadataXML is the SAML metadata for a sample service provider.
 var spMetadataXML = ``
 
+// Example RelayState for UCloud ModelVerse
+var relayState = "https://console.ucloud.cn/modelverse/model-center"
+
+// Example Service Provider ID for UCloud
+var serviceProviderID = "https://signin.ucloud.cn/<公司 ID>/saml/SSO"
+
+// Example Name ID for the user
+var nameID = "testsso"
+
 func main() {
 	logr := logger.DefaultLogger
 	baseURLstr := flag.String("idp", "", "The URL to the IDP")
@@ -101,7 +110,7 @@ func main() {
 	err = idpServer.Store.Put("/users/alice", samlidp.User{Name: "alice",
 		HashedPassword: hashedPassword,
 		Groups:         []string{"Administrators", "Users"},
-		Email:          "testsso", // Name ID of the user
+		Email:          nameID, // Name ID of the user
 		CommonName:     "Alice Smith",
 		Surname:        "Smith",
 		GivenName:      "Alice",
@@ -120,11 +129,10 @@ func main() {
 		GivenName:      "Bob",
 	})
 
-	modelVerse := "https://console.ucloud.cn/modelverse/model-center" // Example RelayState for UCloud ModelVerse
 	err = idpServer.Store.Put("/shortcuts/ucloud", samlidp.Shortcut{
 		Name:              "ucloud",
-		ServiceProviderID: "https://signin.ucloud.cn/xxx/saml/SSO", // Example Service Provider ID
-		RelayState:        &modelVerse,
+		ServiceProviderID: serviceProviderID, // Example Service Provider ID
+		RelayState:        &relayState,
 	})
 	if err != nil {
 		logr.Fatalf("%s", err)
