@@ -73,6 +73,7 @@ UzreO96WzlBBMtY=
 	return c
 }()
 
+// spMetadataXML is the SAML metadata for a sample service provider.
 var spMetadataXML = ``
 
 func main() {
@@ -96,7 +97,7 @@ func main() {
 		logr.Fatalf("%s", err)
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("hunter2"), bcrypt.DefaultCost)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("hunter2"), bcrypt.DefaultCost) // Example password hashing
 	err = idpServer.Store.Put("/users/alice", samlidp.User{Name: "alice",
 		HashedPassword: hashedPassword,
 		Groups:         []string{"Administrators", "Users"},
