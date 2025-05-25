@@ -14,6 +14,11 @@ Identity Provider **身份提供方**，简称 **IdP**。**身份提供方**能�
 
 总结一下，SP 提供服务，需要知道用户的身份，就需要向 IdP 询问。IdP 知道用户的身份，当用户在 IdP 登录成功，IdP 就将用户的身份以 **SAML 断言**的形式发给 SP。SP 信任 IdP 发来的身份断言，从而赋予该用户在 SP 的相关权限。
 
+## SAML 协议流程
+1. 用户在认证页面完成登录。
+2. IdP 生成 SAML Response，通过对浏览器重定向，向 SP 的 ACS 地址返回 SAML Response，其中包含 SAML Assertion 用于确定用户身份。
+3. SP 对 SAML Response 的内容进行检验。
+4. 用户成功登录到 SP 提供的应用。
 
 ## SAML Response
 
